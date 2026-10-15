@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#f4f3ff">
+<title>Apple ID Service</title>
+<style>
+:root{
+  --text:#1b1740; --muted:#6b6f8a; --line:rgba(80,70,200,.13);
+  --card:rgba(255,255,255,.8); --card-b:rgba(255,255,255,.95);
+  --grad:linear-gradient(135deg,#4f6bff,#8b5cf6 50%,#ec4899);
+  --err:#e11d48; --ok:#10b981; --r:26px;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  color:var(--text);min-height:100vh;overflow-x:hidden;background:#f4f3ff;
+  background-image:
+    radial-gradient(700px 460px at 8% -6%,rgba(79,107,255,.28),transparent 62%),
+    radial-gradient(640px 460px at 100% 2%,rgba(236,72,153,.22),transparent 62%),
+    radial-gradient(720px 520px at 55% 108%,rgba(245,158,11,.22),transparent 62%);
+  background-attachment:fixed;
+  padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom);-webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:720px;margin:0 auto;padding:14px 16px 48px}
+
+/* ---------- Hero ---------- */
+header{text-align:center;padding:10px 0 0}
+.eyebrow{font-size:11.5px;letter-spacing:4.5px;text-transform:uppercase;font-weight:700;color:#7c5cf0}
+h1{margin:10px 0 0;font-size:38px;font-weight:800;letter-spacing:-1px;line-height:1.1}
+h1 span{background:linear-gradient(90deg,#4f6bff,#8b5cf6,#ec4899,#f59e0b,#4f6bff);background-size:250% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:shine 6s linear infinite}
+@keyframes shine{to{background-position:250% 0}}
+.tag{color:var(--muted);font-size:15px;margin:12px auto 0;max-width:450px;line-height:1.65}
+
+/* ---------- 3D scene ---------- */
+.scene{height:250px;perspective:950px;display:flex;flex-direction:column;align-items:center;justify-content:center;margin:2px 0 0;user-select:none}
+.float{animation:bob 5s ease-in-out infinite;transform-style:preserve-3d}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+.stage{position:relative;width:112px;height:112px;transform-style:preserve-3d;transform:rotateX(var(--rx,-18deg)) rotateY(var(--ry,0deg));transition:transform .18s ease-out}
+.cube{position:absolute;inset:0;transform-style:preserve-3d;animation:spin 18s linear infinite}
+@keyframes spin{from{transform:rotateX(-20deg) rotateY(0)}to{transform:rotateX(-20deg) rotateY(360deg)}}
+.face{
+  position:absolute;inset:0;border-radius:24px;display:grid;place-items:center;color:#fff;backface-visibility:hidden;
+  background:linear-gradient(145deg,var(--a),var(--b));
+  border:1px solid rgba(255,255,255,.6);
+  box-shadow:inset 0 0 34px rgba(255,255,255,.28),inset 0 3px 0 rgba(255,255,255,.65),inset 0 -10px 24px rgba(0,0,0,.14);
+}
+.face::after{content:"";position:absolute;inset:0;border-radius:inherit;background:linear-gradient(135deg,rgba(255,255,255,.5),rgba(255,255,255,0) 46%,rgba(255,255,255,.08) 100%);pointer-events:none}
+.face svg{width:46px;height:46px;stroke-width:1.5;filter:drop-shadow(0 4px 6px rgba(0,0,0,.28))}
+.f1{--a:#4f6bff;--b:#8b5cf6;transform:rotateY(0) translateZ(56px)}
+.f2{--a:#ec4899;--b:#f59e0b;transform:rotateY(180deg) translateZ(56px)}
+.f3{--a:#10b981;--b:#06b6d4;transform:rotateY(90deg) translateZ(56px)}
+.f4{--a:#8b5cf6;--b:#ec4899;transform:rotateY(-90deg) translateZ(56px)}
+.f5{--a:#f59e0b;--b:#f97316;transform:rotateX(90deg) translateZ(56px)}
+.f6{--a:#0ea5e9;--b:#6366f1;transform:rotateX(-90deg) translateZ(56px)}
+
+.ring{position:absolute;left:50%;top:50%;width:0;height:0;transform-style:preserve-3d;transform:rotateX(-16deg)}
+.orbit{position:absolute;left:0;top:0;width:0;height:0;transform-style:preserve-3d;animation:orb var(--t,10s) linear infinite;animation-delay:var(--d,0s)}
+@keyframes orb{from{transform:rotateY(0)}to{transform:rotateY(360deg)}}
+.orb{
+  position:absolute;left:0;top:0;width:var(--s,20px);height:var(--s,20px);margin:calc(var(--s,20px)/-2);border-radius:50%;
+  transform:translateX(var(--r,100px));animation:bill var(--t,10s) linear infinite;animation-delay:var(--d,0s);
+  background:radial-gradient(circle at 32% 28%,#fff 0,var(--o) 48%,color-mix(in srgb,var(--o) 55%,#1b1740) 100%);
+  box-shadow:0 10px 18px color-mix(in srgb,var(--o) 45%,transparent);
+}
+@keyframes bill{from{transform:translateX(var(--r,100px)) rotateY(0)}to{transform:translateX(var(--r,100px)) rotateY(-360deg)}}
+.shadow{width:150px;height:22px;border-radius:50%;margin-top:34px;background:radial-gradient(closest-side,rgba(79,70,229,.38),rgba(79,70,229,0));animation:sh 5s ease-in-out infinite}
+@keyframes sh{0%,100%{transform:scale(1);opacity:.9}50%{transform:scale(.78);opacity:.55}}
+
+.chips{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:6px}
+.chip{display:inline-flex;align-items:center;gap:7px;padding:8px 14px;border-radius:999px;font-size:12.5px;font-weight:600;background:#fff;border:1px solid var(--line);box-shadow:0 6px 16px rgba(79,70,229,.09)}
+.chip svg{width:15px;height:15px}
+.chip:nth-child(1) svg{color:#d97706}.chip:nth-child(2) svg{color:#059669}.chip:nth-child(3) svg{color:#7c3aed}
+
+.notice{
+  margin:22px 0 6px;padding:13px 16px;border-radius:16px;font-size:12.5px;line-height:1.6;color:#7c4a03;
+  background:#fff8e6;border:1px solid #fcd98a;
+}
+
+/* ---------- Progress ---------- */
+.progress{display:flex;align-items:center;gap:6px;margin:22px 0 8px}
+.pstep{flex:1;text-align:center;font-size:11px;color:var(--muted);font-weight:700;letter-spacing:.6px;text-transform:uppercase}
+.pdot{
+  width:34px;height:34px;margin:0 auto 7px;border-radius:50%;display:grid;place-items:center;font-weight:700;font-size:14px;
+  background:#fff;border:2px solid var(--line);color:var(--muted);transition:.3s;
+}
+.pstep.active .pdot{background:var(--grad);color:#fff;border-color:transparent;box-shadow:0 8px 22px rgba(139,92,246,.5)}
+.pstep.done .pdot{background:linear-gradient(145deg,#34d399,#10b981);color:#fff;border-color:transparent}
+.pstep.active,.pstep.done{color:var(--text)}
+.bar{height:5px;border-radius:5px;background:rgba(80,70,200,.1);overflow:hidden;margin-bottom:20px}
+.bar i{display:block;height:100%;width:33%;background:linear-gradient(90deg,#4f6bff,#8b5cf6,#ec4899,#f59e0b);transition:width .5s ease;border-radius:5px}
+
+.card{
+  background:var(--card);border:1px solid var(--card-b);border-radius:var(--r);padding:22px;
+  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  box-shadow:0 24px 60px rgba(79,70,229,.16),inset 0 1px 0 #fff;
+}
+h2{margin:0 0 6px;font-size:23px;font-weight:800;letter-spacing:-.3px}
+.hint{color:var(--muted);font-size:14px;margin:0 0 20px}
+.step{display:none;animation:rise .4s ease}
+.step.show{display:block}
+@keyframes rise{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+
+/* ---------- Services (3D tilt cards) ---------- */
+.services{display:grid;gap:12px;grid-template-columns:1fr;perspective:1000px}
+@media(min-width:640px){.services{grid-template-columns:1fr 1fr}}
+.svc{
+  position:relative;display:flex;align-items:center;gap:13px;text-align:left;width:100%;cursor:pointer;color:var(--text);font:inherit;
+  padding:14px;border-radius:20px;background:#fff;border:2px solid transparent;transform-style:preserve-3d;
+  transform:rotateX(var(--tx,0deg)) rotateY(var(--ty,0deg)) translateY(var(--lift,0px));
+  box-shadow:0 8px 22px rgba(79,70,229,.1);transition:transform .2s ease-out,box-shadow .25s,border-color .25s,background .25s;
+  overflow:visible;
+}
+.svc::before{content:"";position:absolute;left:0;top:14px;bottom:14px;width:4px;border-radius:0 4px 4px 0;background:linear-gradient(180deg,var(--c),var(--c2))}
+.svc:hover{--lift:-3px;box-shadow:0 18px 36px color-mix(in srgb,var(--c) 28%,transparent)}
+.svc:focus-visible,.btn:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid rgba(139,92,246,.5);outline-offset:2px}
+.svc.sel{border-color:var(--c);background:linear-gradient(145deg,#fff,color-mix(in srgb,var(--c) 10%,#fff));box-shadow:0 16px 36px color-mix(in srgb,var(--c) 32%,transparent)}
+.svc .ic{
+  width:42px;height:42px;border-radius:13px;display:grid;place-items:center;flex:none;color:#fff;transform:translateZ(26px);
+  background:linear-gradient(145deg,var(--c),var(--c2));
+  box-shadow:0 10px 20px color-mix(in srgb,var(--c) 42%,transparent),inset 0 2px 0 rgba(255,255,255,.45),inset 0 -4px 8px rgba(0,0,0,.1);
+}
+.svc .ic svg{width:20px;height:20px}
+.svc .tx{flex:1;min-width:0;transform:translateZ(14px)}
+.svc .nm{font-weight:700;font-size:15px;line-height:1.3}
+.svc .ds{font-size:12.5px;color:var(--muted);margin-top:3px;line-height:1.4}
+.svc .go{
+  width:24px;height:24px;border-radius:50%;display:grid;place-items:center;flex:none;font-size:12px;font-weight:700;
+  background:color-mix(in srgb,var(--c) 14%,#fff);color:var(--c);transition:.25s;transform:translateZ(18px);
+}
+.svc.sel .go{background:linear-gradient(145deg,var(--c),var(--c2));color:#fff}
+
+.chosen{
+  display:flex;gap:12px;align-items:center;margin-bottom:18px;padding:12px 14px;border-radius:16px;font-weight:700;font-size:15px;
+  background:linear-gradient(135deg,color-mix(in srgb,var(--c) 14%,#fff),#fff);border:1px solid color-mix(in srgb,var(--c) 35%,transparent);
+}
+.chosen .ic2{width:34px;height:34px;border-radius:11px;display:grid;place-items:center;color:#fff;background:linear-gradient(145deg,var(--c),var(--c2));box-shadow:0 8px 16px color-mix(in srgb,var(--c) 40%,transparent)}
+.chosen .ic2 svg{width:17px;height:17px}
+
+/* ---------- Form ---------- */
+.field{margin-bottom:15px}
+label{display:block;font-size:13px;font-weight:600;color:#4a4670;margin-bottom:7px}
+label em{color:#ec4899;font-style:normal}
+input,textarea{
+  width:100%;padding:14px 15px;border-radius:15px;font:inherit;font-size:16px;color:var(--text);
+  background:#fff;border:1.5px solid #dcd9f5;transition:border-color .2s,box-shadow .2s;
+  box-shadow:inset 0 2px 4px rgba(79,70,229,.05);
+}
+input::placeholder,textarea::placeholder{color:#a3a1c2}
+input:focus,textarea:focus{border-color:#8b5cf6;box-shadow:0 0 0 4px rgba(139,92,246,.18)}
+textarea{min-height:100px;resize:vertical}
+.field.bad input,.field.bad textarea{border-color:var(--err)}
+.err{display:none;color:var(--err);font-size:12.5px;margin-top:6px;font-weight:500}
+.field.bad .err{display:block}
+
+/* ---------- 3D buttons ---------- */
+.actions{display:flex;gap:12px;margin-top:22px}
+.btn{
+  flex:1;padding:16px;border-radius:17px;border:1.5px solid #dcd9f5;font:inherit;font-size:16px;font-weight:700;
+  cursor:pointer;color:var(--text);background:#fff;transition:transform .12s,box-shadow .12s,opacity .2s;
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;text-decoration:none;text-align:center;
+  box-shadow:0 4px 0 #dcd9f5;
+}
+.btn:active{transform:translateY(3px);box-shadow:0 1px 0 #dcd9f5}
+.btn.primary{background:linear-gradient(135deg,#5b78ff,#8b5cf6 55%,#d946ef);border-color:transparent;color:#fff;box-shadow:0 5px 0 #5b3fd0,0 16px 28px rgba(139,92,246,.4),inset 0 1px 0 rgba(255,255,255,.4)}
+.btn.primary:active{transform:translateY(4px);box-shadow:0 1px 0 #5b3fd0,0 6px 12px rgba(139,92,246,.35)}
+.btn.wa{background:linear-gradient(145deg,#2ee27a,#0fa37f);border-color:transparent;color:#fff;padding:18px;font-size:17px;box-shadow:0 5px 0 #0a7a5e,0 16px 28px rgba(37,211,102,.34),inset 0 1px 0 rgba(255,255,255,.4)}
+.btn.wa:active{transform:translateY(4px);box-shadow:0 1px 0 #0a7a5e,0 6px 12px rgba(37,211,102,.3)}
+.btn[disabled]{opacity:.4;cursor:not-allowed;transform:none;box-shadow:none}
+.btn svg{width:18px;height:18px;flex:none}
+
+.summary{border-radius:18px;border:1px solid var(--line);overflow:hidden;margin-bottom:16px;background:#fff}
+.row{display:flex;justify-content:space-between;gap:14px;padding:12px 15px;font-size:14px;border-bottom:1px solid var(--line)}
+.row:last-child{border-bottom:0}
+.row span:first-child{color:var(--muted);flex:none}
+.row span:last-child{text-align:right;word-break:break-word;font-weight:600}
+
+.banner{display:none;margin-top:14px;padding:14px 15px;border-radius:16px;font-size:14px;line-height:1.55}
+.banner.show{display:block}
+.banner.error{background:#fff1f3;border:1px solid #fda4af;color:#9f1239}
+.spin{width:18px;height:18px;border:3px solid rgba(255,255,255,.35);border-top-color:#fff;border-radius:50%;animation:sp .8s linear infinite;display:none}
+.loading .spin{display:inline-block}
+@keyframes sp{to{transform:rotate(360deg)}}
+
+.success{text-align:center}
+.check{
+  width:76px;height:76px;margin:2px auto 16px;border-radius:50%;display:grid;place-items:center;font-size:32px;color:#fff;font-weight:700;
+  background:radial-gradient(circle at 30% 25%,#a7f3d0,#10b981 55%,#047857);
+  box-shadow:0 16px 34px rgba(16,185,129,.5),inset 0 -6px 12px rgba(0,0,0,.15),inset 0 3px 6px rgba(255,255,255,.5);
+  animation:pop .55s cubic-bezier(.2,1.6,.4,1);
+}
+@keyframes pop{from{transform:scale(.3) rotateY(180deg);opacity:0}to{transform:scale(1) rotateY(0);opacity:1}}
+.oid{
+  margin:16px 0;padding:18px;border-radius:18px;font-size:23px;font-weight:800;letter-spacing:1.5px;
+  background:linear-gradient(135deg,#eef2ff,#fdf2f8);border:2px dashed #a78bfa;word-break:break-all;color:#5b3fd0;
+}
+.status{display:inline-block;padding:7px 16px;border-radius:999px;font-size:12.5px;font-weight:700;background:#fff7e0;border:1px solid #fbbf24;color:#b45309;margin-bottom:18px}
+.stack{display:grid;gap:12px;margin-top:18px}
+.stack .btn{flex:none}
+.note{font-size:12.5px;color:var(--muted);line-height:1.65;margin-top:16px;text-align:left}
+footer{margin-top:30px;text-align:center;font-size:12px;color:#7a7d99;line-height:1.8}
+.toast{
+  position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom));transform:translate(-50%,30px);opacity:0;pointer-events:none;
+  background:#1b1740;color:#fff;padding:12px 20px;border-radius:999px;font-size:14px;transition:.3s;z-index:50;box-shadow:0 10px 30px rgba(27,23,64,.35)
+}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+@media(max-width:420px){h1{font-size:31px}.card{padding:18px}.svc .go{display:none}.scene{height:230px;transform:scale(.92)}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="eyebrow">Premium Account Services</div>
+  <h1>Apple ID <span>Service</span></h1>
+
+  <div class="scene" aria-hidden="true">
+    <div class="float">
+      <div class="stage" id="stage">
+        <div class="cube">
+          <div class="face f1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6l7-3z"/><path d="M9 12l2 2 4-4"/></svg></div>
+          <div class="face f2"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="15" r="4"/><path d="m11 12 9-9M16 7l3 3M14 9l2 2"/></svg></div>
+          <div class="face f3"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg></div>
+          <div class="face f4"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg></div>
+          <div class="face f5"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="2" width="10" height="20" rx="2"/><path d="M11 18h2"/></svg></div>
+          <div class="face f6"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M19 8v6M22 11h-6"/></svg></div>
+        </div>
+        <div class="ring">
+          <div class="orbit" style="--t:9s;--d:0s"><div class="orb" style="--o:#4f6bff;--r:104px;--s:20px;--t:9s;--d:0s"></div></div>
+          <div class="orbit" style="--t:12s;--d:-4s"><div class="orb" style="--o:#ec4899;--r:116px;--s:16px;--t:12s;--d:-4s"></div></div>
+          <div class="orbit" style="--t:15s;--d:-9s"><div class="orb" style="--o:#f59e0b;--r:98px;--s:14px;--t:15s;--d:-9s"></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="shadow"></div>
+  </div>
+
+  <p class="tag">A refined, personal service for your Apple account. Choose what you need, share your details, and we'll continue with you on WhatsApp.</p>
+  <div class="chips">
+    <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></svg>Fast Response</span>
+    <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>Private &amp; Secure</span>
+    <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/></svg>WhatsApp Support</span>
+  </div>
+</header>
+
+<div class="notice">
+  Independent support service — not affiliated with or endorsed by Apple Inc.
+  <strong>Never send us your Apple password, verification codes, recovery key, or card security details.</strong>
+</div>
+
+<nav class="progress" aria-label="Request progress" id="progress"></nav>
+<div class="bar" aria-hidden="true"><i id="barFill"></i></div>
+
+<!-- STEP 1 -->
+<section class="step card show" id="step1" aria-labelledby="t1">
+  <h2 id="t1">Select Your Service</h2>
+  <p class="hint">Choose one service per request.</p>
+  <div class="services" id="serviceList"></div>
+  <div class="actions"><button class="btn primary" id="s1Next" disabled>Continue</button></div>
+</section>
+
+<!-- STEP 2 -->
+<section class="step card" id="step2" aria-labelledby="t2">
+  <h2 id="t2">Your Information</h2>
+  <p class="hint">Fill in the details below.</p>
+  <div class="chosen" id="chosenBox"><span class="ic2" id="s2Ic"></span><span id="s2Svc"></span></div>
+  <form id="infoForm" novalidate autocomplete="on"></form>
+  <div class="banner error" id="submitErr" role="alert"><span id="submitErrText"></span></div>
+  <div class="actions">
+    <button class="btn" id="s2Back" type="button">Back</button>
+    <button class="btn primary" id="s2Next" type="button" disabled>
+      <span class="spin"></span><span id="s2Label">Submit Request</span>
+    </button>
+  </div>
+</section>
+
+<!-- STEP 3 -->
+<section class="step card success" id="step3" aria-labelledby="t3">
+  <div class="check" aria-hidden="true">✓</div>
+  <h2 id="t3">Request Received</h2>
+  <p class="hint">Your request has been saved. Keep your Order ID.</p>
+  <div class="oid" id="oidBox"></div>
+  <div class="status" id="statusBadge">Pending Review</div>
+  <div class="summary" id="doneSummary" style="text-align:left"></div>
+  <div class="stack">
+    <a class="btn wa" id="waBtn" href="#" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/></svg>Continue on WhatsApp</a>
+    <button class="btn" id="copyOid" type="button">Copy Order ID</button>
+    <button class="btn" id="homeBtn" type="button">Back to Home</button>
+  </div>
+  <p class="note">Tap the WhatsApp button, then press <b>Send</b> in WhatsApp to share your request details with us. The message is not sent automatically.</p>
+</section>
+
+<footer>
+  Apple and Apple ID are trademarks of Apple Inc.<br>
+  This website is an independent service and has no official connection to Apple.
+</footer>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+/* =====================================================================
+   CONFIGURATION
+   ===================================================================== */
+var CONFIG = {
+  APPS_SCRIPT_URL: "https://script.google.com/macros/s/AKfycbyDjM4OxWqubp5U6hCNYKjiUUI1V5e-akO53Y3RQ3ZinLbexLMy5ZhcD2T3n_O3b6vP/exec",
+  WHATSAPP_NUMBER: "8801410003483",
+  ORDER_PREFIX: "AIS",
+  REQUEST_TIMEOUT_MS: 30000
+};
+/* ===================== END OF CONFIGURATION ===================== */
+
+(function(){
+"use strict";
+
+var F = {
+  name:   {key:"name",label:"Full Name",type:"text",req:true,ph:"Your full name",ac:"name",kind:"name"},
+  dob:    {key:"dob",label:"Date of Birth",type:"date",req:true,kind:"dob"},
+  phone:  {key:"phone",label:"Contact Phone Number",type:"tel",req:true,ph:"01XXXXXXXXX",ac:"tel",kind:"phone"},
+  wa:     {key:"whatsapp",label:"WhatsApp Number",type:"tel",req:true,ph:"01XXXXXXXXX",ac:"tel",kind:"phone"},
+  email:  function(label,req){return {key:"email",label:label,type:"email",req:req,ph:"name@example.com",ac:"email",kind:"email"};},
+  region: {key:"region",label:"Requested Country / Region",type:"text",req:true,ph:"e.g. Bangladesh",kind:"text"},
+  details:function(label,req,ph){return {key:"details",label:label,type:"textarea",req:req,ph:ph,kind:"details"};}
+};
+var SERVICES = [
+  {id:"create",c:"#2563eb",c2:"#06b6d4",name:"Apple ID Create",desc:"Set up a brand-new Apple ID",
+   fields:[F.name,F.dob,F.phone,F.wa,F.email("Email Address (optional)",false),F.details("Additional Information (optional)",false,"Anything we should know")]},
+  {id:"recovery",c:"#059669",c2:"#84cc16",name:"Apple Account Recovery",desc:"Get help regaining access",
+   fields:[F.name,F.phone,F.wa,F.email("Apple Account Email",true),F.details("Describe the recovery issue",true,"What happened? (do not include passwords or codes)")]},
+  {id:"email",c:"#db2777",c2:"#f43f5e",name:"Apple Account Email Update",desc:"Change your account email",
+   fields:[F.name,F.phone,F.wa,F.email("Apple Account Email",true),F.details("Describe the requested change",true,"Which email should be changed to what?")]},
+  {id:"number",c:"#d97706",c2:"#f97316",name:"Apple Account Number Update",desc:"Update your phone number",
+   fields:[F.name,F.phone,F.wa,F.email("Apple Account Email",true),F.details("Describe the number-update issue",true,"What needs to be updated?")]},
+  {id:"password",c:"#7c3aed",c2:"#a855f7",name:"Apple Account Password Reset",desc:"Reset a forgotten password",
+   fields:[F.name,F.phone,F.wa,F.email("Apple Account Email",true),F.details("Describe the problem",true,"Do not include your password or codes")]},
+  {id:"region",c:"#0284c7",c2:"#6366f1",name:"Apple Account Country/Region Change",desc:"Move your account to a new region",
+   fields:[F.name,F.phone,F.wa,F.email("Apple Account Email",true),F.region,F.details("Additional Information (optional)",false,"Anything we should know")]}
+];
+
+function svg(p){return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">'+p+'</svg>';}
+var ICONS = {
+  create:svg('<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M19 8v6M22 11h-6"/>'),
+  recovery:svg('<path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/><path d="M3 21v-5h5"/>'),
+  email:svg('<rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/>'),
+  number:svg('<rect x="7" y="2" width="10" height="20" rx="2"/><path d="M11 18h2"/>'),
+  password:svg('<circle cx="8" cy="15" r="4"/><path d="m11 12 9-9M16 7l3 3M14 9l2 2"/>'),
+  region:svg('<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/>')
+};
+
+var state = {step:1, service:null, data:{}, touched:{}, orderId:null, submitting:false, order:null};
+var STEP_NAMES = ["Service","Details","Done"];
+var TOTAL = STEP_NAMES.length;
+
+function $(id){return document.getElementById(id);}
+function el(tag,cls,text){var e=document.createElement(tag);if(cls)e.className=cls;if(text!==undefined)e.textContent=text;return e;}
+function digits(s){return String(s||"").replace(/[\s\-()]/g,"");}
+function toast(msg){var t=$("toast");t.textContent=msg;t.classList.add("show");clearTimeout(toast._t);toast._t=setTimeout(function(){t.classList.remove("show");},2200);}
+function makeOrderId(){
+  var d=new Date(),p=function(n){return String(n).padStart(2,"0");};
+  var chars="ABCDEFGHJKLMNPQRSTUVWXYZ23456789",r="";
+  var arr=new Uint32Array(6);
+  if(window.crypto&&crypto.getRandomValues){crypto.getRandomValues(arr);}else{for(var i=0;i<6;i++)arr[i]=Math.floor(Math.random()*4294967295);}
+  for(var j=0;j<6;j++)r+=chars[arr[j]%chars.length];
+  return CONFIG.ORDER_PREFIX+"-"+String(d.getFullYear()).slice(2)+p(d.getMonth()+1)+p(d.getDate())+"-"+r;
+}
+function copyText(text,okMsg){
+  function fallback(){
+    var ta=document.createElement("textarea");ta.value=text;ta.style.position="fixed";ta.style.opacity="0";
+    document.body.appendChild(ta);ta.select();var ok=false;
+    try{ok=document.execCommand("copy");}catch(e){}
+    document.body.removeChild(ta);toast(ok?okMsg:"Copy failed — please copy manually");
+  }
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(text).then(function(){toast(okMsg);},fallback);
+  }else fallback();
+}
+function configProblems(){
+  var p=[];
+  if(!/^https:\/\/script\.google(usercontent)?\.com\//.test(CONFIG.APPS_SCRIPT_URL))p.push("Apps Script URL is not configured.");
+  if(!/^\d{8,15}$/.test(CONFIG.WHATSAPP_NUMBER))p.push("WhatsApp number is not configured.");
+  return p;
+}
+
+function validateField(f,v){
+  v=(v||"").trim();
+  if(!v){return f.req?"This field is required.":"";}
+  switch(f.kind){
+    case "name": if(v.length<3)return "Please enter your full name."; break;
+    case "phone": if(!/^\+?\d{10,15}$/.test(digits(v)))return "Enter a valid phone number (10–15 digits)."; break;
+    case "email": if(!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v))return "Enter a valid email address."; break;
+    case "dob":
+      var d=new Date(v);if(isNaN(d)||d>new Date())return "Enter a valid date of birth.";
+      var age=(Date.now()-d.getTime())/31557600000;if(age<5||age>120)return "Enter a valid date of birth."; break;
+    case "details": if(f.req&&v.length<10)return "Please describe in at least 10 characters."; if(v.length>800)return "Please keep this under 800 characters."; break;
+    case "text": if(v.length<2)return "Please enter a valid value."; break;
+  }
+  return "";
+}
+function infoValid(){
+  if(!state.service)return false;
+  return state.service.fields.every(function(f){return !validateField(f,state.data[f.key]);});
+}
+
+function buildProgress(){
+  var nav=$("progress");nav.innerHTML="";
+  STEP_NAMES.forEach(function(n,i){
+    var s=el("div","pstep");s.id="ps"+(i+1);
+    s.appendChild(el("div","pdot",String(i+1)));s.appendChild(el("div","",n));nav.appendChild(s);
+  });
+}
+function updateProgress(){
+  for(var i=1;i<=TOTAL;i++){
+    var s=$("ps"+i);s.className="pstep"+(i<state.step?" done":"")+(i===state.step?" active":"");
+    s.firstChild.textContent=i<state.step?"✓":String(i);
+    if(i===state.step)s.setAttribute("aria-current","step");else s.removeAttribute("aria-current");
+  }
+  $("barFill").style.width=(state.step*100/TOTAL)+"%";
+}
+function go(n){
+  state.step=n;
+  for(var i=1;i<=TOTAL;i++)$("step"+i).classList.toggle("show",i===n);
+  updateProgress();window.scrollTo({top:0,behavior:"smooth"});
+  if(n===2)renderInfo();
+}
+function renderServices(){
+  var box=$("serviceList");box.innerHTML="";
+  SERVICES.forEach(function(s){
+    var sel=state.service&&state.service.id===s.id;
+    var b=el("button","svc"+(sel?" sel":""));b.type="button";b.setAttribute("data-id",s.id);
+    b.style.setProperty("--c",s.c);b.style.setProperty("--c2",s.c2);
+    b.setAttribute("aria-pressed",sel?"true":"false");
+    var ic=el("div","ic");ic.innerHTML=ICONS[s.id];b.appendChild(ic);
+    var tx=el("div","tx");tx.appendChild(el("div","nm",s.name));tx.appendChild(el("div","ds",s.desc));b.appendChild(tx);
+    b.appendChild(el("span","go",sel?"✓":"→"));
+    b.addEventListener("click",function(){selectService(s.id);});
+    box.appendChild(b);
+  });
+  $("s1Next").disabled=!state.service;
+}
+function selectService(id){
+  var s=SERVICES.filter(function(x){return x.id===id;})[0];
+  if(state.service&&state.service.id!==s.id){state.touched={};}
+  state.service=s;renderServices();
+  clearTimeout(selectService._t);
+  selectService._t=setTimeout(function(){if(state.step===1&&state.service&&state.service.id===id)go(2);},350);
+}
+function makeField(f,store,validator,touchedKey,onChange){
+  var wrap=el("div","field");
+  var lab=el("label","",f.label);lab.setAttribute("for","i_"+touchedKey+"_"+f.key);
+  if(f.req){lab.appendChild(el("em"," *"));}
+  var inp;
+  if(f.type==="textarea"){inp=document.createElement("textarea");}
+  else{inp=document.createElement("input");inp.type=f.type;}
+  inp.id="i_"+touchedKey+"_"+f.key;inp.name=f.key;
+  if(f.ph)inp.placeholder=f.ph;
+  if(f.ac)inp.autocomplete=f.ac;
+  if(f.type==="tel")inp.inputMode="tel";
+  if(f.type==="date")inp.max=new Date().toISOString().slice(0,10);
+  inp.value=store[f.key]||"";
+  var err=el("div","err");err.id="e_"+touchedKey+"_"+f.key;err.setAttribute("role","alert");
+  inp.setAttribute("aria-describedby",err.id);
+  function show(){
+    var msg=state.touched[touchedKey+f.key]?validator(f,store[f.key]):"";
+    err.textContent=msg;wrap.classList.toggle("bad",!!msg);inp.setAttribute("aria-invalid",msg?"true":"false");
+  }
+  inp.addEventListener("input",function(){store[f.key]=inp.value;onChange();if(state.touched[touchedKey+f.key])show();});
+  inp.addEventListener("blur",function(){state.touched[touchedKey+f.key]=true;show();onChange();});
+  wrap.appendChild(lab);wrap.appendChild(inp);wrap.appendChild(err);
+  return wrap;
+}
+function updateSubmitBtn(){$("s2Next").disabled=state.submitting||!infoValid();}
+function renderInfo(){
+  var s=state.service;
+  var cb=$("chosenBox");cb.style.setProperty("--c",s.c);cb.style.setProperty("--c2",s.c2);
+  $("s2Ic").innerHTML=ICONS[s.id];$("s2Svc").textContent=s.name;
+  var form=$("infoForm");form.innerHTML="";
+  s.fields.forEach(function(f){
+    form.appendChild(makeField(f,state.data,validateField,"info",updateSubmitBtn));
+  });
+  hideSubmitErr();updateSubmitBtn();
+}
+function showSubmitErr(m){$("submitErrText").textContent=m;$("submitErr").classList.add("show");}
+function hideSubmitErr(){$("submitErr").classList.remove("show");}
+function addRows(box,rows){
+  rows.forEach(function(r){var row=el("div","row");row.appendChild(el("span","",r[0]));row.appendChild(el("span","",r[1]));box.appendChild(row);});
+}
+
+function extraInfo(includeDob){
+  var d=state.data,out=[];
+  if(includeDob&&d.dob)out.push("Date of Birth: "+d.dob);
+  if((d.region||"").trim())out.push("Requested Country/Region: "+d.region.trim());
+  if((d.details||"").trim())out.push("Details: "+d.details.trim());
+  return out.join(" | ");
+}
+function buildPayload(){
+  var d=state.data,s=state.service;
+  return {
+    orderId:state.orderId,
+    customerName:(d.name||"").trim(),
+    service:s.name,
+    serviceId:s.id,
+    phone:(d.phone||"").trim(),
+    whatsapp:(d.whatsapp||"").trim(),
+    email:(d.email||"").trim(),
+    additionalInfo:extraInfo(true),
+    orderStatus:"Pending Review"
+  };
+}
+function buildWhatsAppUrl(o){
+  var lines=[
+    "*New Request — Apple ID Service*",
+    "Order ID: "+o.orderId,
+    "Service: "+o.service,
+    "Name: "+o.customerName,
+    "Phone: "+o.phone,
+    "WhatsApp: "+o.whatsapp
+  ];
+  if(o.email)lines.push("Email: "+o.email);
+  var extra=extraInfo(false);if(extra)lines.push(extra.split(" | ").join("\n"));
+  lines.push("Status: "+o.orderStatus);
+  return "https://wa.me/"+CONFIG.WHATSAPP_NUMBER+"?text="+encodeURIComponent(lines.join("\n"));
+}
+
+function setLoading(on){
+  state.submitting=on;
+  $("step2").classList.toggle("loading",on);
+  $("s2Label").textContent=on?"Submitting…":"Submit Request";
+  $("s2Back").disabled=on;updateSubmitBtn();
+}
+function submitOrder(){
+  if(state.submitting)return;
+  hideSubmitErr();
+  if(!infoValid()){
+    state.service.fields.forEach(function(f){state.touched["info"+f.key]=true;});renderInfo();
+    showSubmitErr("Please complete all required fields correctly.");return;
+  }
+  var problems=configProblems();
+  if(problems.length){showSubmitErr("Setup incomplete: "+problems.join(" "));return;}
+  if(!state.orderId)state.orderId=makeOrderId();
+  var payload=buildPayload();
+  setLoading(true);
+  var ctrl=("AbortController" in window)?new AbortController():null;
+  var timer=setTimeout(function(){if(ctrl)ctrl.abort();},CONFIG.REQUEST_TIMEOUT_MS);
+  fetch(CONFIG.APPS_SCRIPT_URL,{
+    method:"POST",
+    headers:{"Content-Type":"text/plain;charset=utf-8"},
+    body:JSON.stringify(payload),
+    redirect:"follow",
+    signal:ctrl?ctrl.signal:undefined
+  }).then(function(r){
+    if(!r.ok)throw new Error("HTTP "+r.status);
+    return r.text();
+  }).then(function(txt){
+    clearTimeout(timer);
+    var res;try{res=JSON.parse(txt);}catch(e){throw new Error("The server sent an unexpected reply (check that the web app access is set to “Anyone”).");}
+    if(res&&res.success&&res.orderId){
+      payload.orderId=res.orderId;state.order=payload;
+      setLoading(false);showSuccess();
+    }else{
+      throw new Error((res&&res.error)||"The server did not confirm the request.");
+    }
+  }).catch(function(e){
+    clearTimeout(timer);setLoading(false);
+    var msg=(e&&e.name==="AbortError")?"The request timed out.":(e&&e.message)||"Network error.";
+    if(msg==="Failed to fetch"||msg==="Load failed")msg="Could not reach the server.";
+    showSubmitErr("Your request could not be submitted: "+msg+" Please check your connection and press Submit Request again — it will not create a duplicate.");
+  });
+}
+function showSuccess(){
+  var o=state.order;
+  $("oidBox").textContent=o.orderId;
+  $("statusBadge").textContent=o.orderStatus;
+  var box=$("doneSummary");box.innerHTML="";
+  addRows(box,[["Service",o.service],["Name",o.customerName]]);
+  $("waBtn").href=buildWhatsAppUrl(o);
+  go(3);
+}
+function resetAll(){
+  state={step:1,service:null,data:{},touched:{},orderId:null,submitting:false,order:null};
+  renderServices();go(1);
+}
+
+$("s1Next").addEventListener("click",function(){if(state.service)go(2);});
+$("s2Back").addEventListener("click",function(){if(!state.submitting)go(1);});
+$("s2Next").addEventListener("click",submitOrder);
+$("copyOid").addEventListener("click",function(){if(state.order)copyText(state.order.orderId,"Order ID copied");});
+$("homeBtn").addEventListener("click",resetAll);
+$("infoForm").addEventListener("submit",function(e){e.preventDefault();});
+
+/* ---------- 3D interaction ---------- */
+var reduced=window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches;
+var canHover=window.matchMedia&&matchMedia("(hover: hover)").matches;
+if(!reduced){
+  var stage=$("stage");
+  window.addEventListener("pointermove",function(e){
+    var x=e.clientX/window.innerWidth-.5,y=e.clientY/window.innerHeight-.5;
+    stage.style.setProperty("--ry",(x*55)+"deg");
+    stage.style.setProperty("--rx",(-18-y*34)+"deg");
+  },{passive:true});
+  if(canHover){
+    var list=$("serviceList");
+    list.addEventListener("pointermove",function(e){
+      var b=e.target.closest&&e.target.closest(".svc");if(!b)return;
+      var r=b.getBoundingClientRect(),px=(e.clientX-r.left)/r.width-.5,py=(e.clientY-r.top)/r.height-.5;
+      b.style.setProperty("--ty",(px*9)+"deg");b.style.setProperty("--tx",(-py*9)+"deg");
+    });
+    list.addEventListener("pointerout",function(e){
+      var b=e.target.closest&&e.target.closest(".svc");if(!b)return;
+      b.style.setProperty("--ty","0deg");b.style.setProperty("--tx","0deg");
+    });
+  }
+}
+
+buildProgress();renderServices();updateProgress();
+})();
+</script>
+</body>
+</html>
